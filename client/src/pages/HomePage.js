@@ -117,50 +117,30 @@ const HomePage = () => {
       />
       {/* banner image */}
       <div className="container-fluid row mt-3 home-page">
-        <div className="col-mb-3 filters">
-          {/* <h4 className="text-center">Filter By Category</h4> */}
-          <div className="col-md-1 offset-md-11 d-flex flex-column">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              id="categoryDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Categories
-            </button>
-            <ul className="dropdown-menu" aria-labelledby="categoryDropdown">
-              {categories?.map((c) => (
-                <li key={c._id} className="form-check">
-                  <Checkbox
-                    onChange={(e) => handleFilter(e.target.checked, c._id)}
-                  >
-                    {c.name}
-                  </Checkbox>
-                </li>
-              ))}
-            </ul>
+        <div className="col-md-3 filters">
+          <h4 className="text-center">Filter By Category</h4>
+          <div className="d-flex flex-column">
+            {categories?.map((c) => (
+              <Checkbox
+                key={c._id}
+                onChange={(e) => handleFilter(e.target.checked, c._id)}
+              >
+                {c.name}
+              </Checkbox>
+            ))}
           </div>
           {/* price filter */}
-          {/* <h4 className="text-center mt-4">Filter By Price</h4> */}
+          <h4 className="text-center mt-4">Filter By Price</h4>
           <div className="d-flex flex-column">
-            <label htmlFor="priceFilter" className="form-label">
-              Filter By Price
-            </label>
-            <select
-              id="priceFilter"
-              className="form-select"
-              onChange={(e) => setRadio(e.target.value)}
-            >
-              <option value="">Select Price Range</option>
+            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
               {Prices?.map((p) => (
-                <option key={p._id} value={p.array}>
-                  {p.name}
-                </option>
+                <div key={p._id}>
+                  <Radio value={p.array}>{p.name}</Radio>
+                </div>
               ))}
-            </select>
+            </Radio.Group>
           </div>
-          <div className="d-flex flex-column mt-3">
+          <div className="d-flex flex-column">
             <button
               className="btn btn-danger"
               onClick={() => window.location.reload()}
@@ -168,7 +148,6 @@ const HomePage = () => {
               RESET FILTERS
             </button>
           </div>
-
         </div>
         <div className="col-md-9 ">
           <h1 className="text-center">All Products</h1>
