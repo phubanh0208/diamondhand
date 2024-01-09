@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import Layout from "./../components/Layout/Layout";
 import { AiOutlineReload } from "react-icons/ai";
 import "../styles/Homepage.css";
+import { Select } from 'antd';
+const { Option } = Select;
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -67,7 +69,9 @@ const HomePage = () => {
   const loadMore = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      const { data } = await axios.post(`/api/v1/product/product-list/${page}`, {
+        filters: { checked, radio },
+      });
       setLoading(false);
       setProducts([...products, ...data?.products]);
     } catch (error) {
@@ -106,6 +110,154 @@ const HomePage = () => {
       console.log(error);
     }
   };
+  // return (
+  //   <Layout title={"ALl Products - Best offers "}>
+  //     {/* banner image */}
+  //     <img
+  //       src="/images/banner.png"
+  //       className="banner-img"
+  //       alt="bannerimage"
+  //       width={"100%"}
+  //     />
+  //     {/* banner image */}
+  //     <div className="container-fluid row mt-3 home-page">
+  //       <div className="col-md-2 filters">
+  //         <h4 className="text-center">Filter By Category</h4>
+  //         <div className="d-flex flex-column">
+  //           {/* {categories?.map((c) => (
+  //             <Checkbox
+  //               key={c._id}
+  //               onChange={(e) => handleFilter(e.target.checked, c._id)}
+  //             >
+  //               {c.name}
+  //             </Checkbox>
+  //           ))} */}
+
+  //           <Select
+  //             mode="multiple"
+  //             style={{ width: '100%' }}
+  //             placeholder="Filter By Category"
+  //             onChange={(selectedValues) => {
+  //               let all = [...checked];
+
+  //               categories.forEach((category) => {
+  //                 const id = category._id;
+
+  //                 if (selectedValues.includes(id) && !all.includes(id)) {
+  //                   all.push(id);
+  //                 } else if (!selectedValues.includes(id) && all.includes(id)) {
+  //                   all = all.filter((c) => c !== id);
+  //                 }
+  //               });
+
+  //               setChecked(all);
+  //             }}
+  //             value={checked}
+  //           >
+  //             {categories?.map((c) => (
+  //               <Option key={c._id} value={c._id}>
+  //                 {c.name}
+  //               </Option>
+  //             ))}
+  //           </Select>
+  //         </div>
+  //         {/* price filter */}
+  //         <h4 className="text-center mt-4">Filter By Price</h4>
+  //         <div className="d-flex flex-column">
+  //           <Radio.Group
+  //             onChange={(e) => setRadio(e.target.value)}
+  //             value={radio}
+  //           >
+  //             {Prices?.map((p) => (
+  //               <Radio.Button key={p._id} value={p.array}>
+  //                 {p.name}
+  //               </Radio.Button>
+  //             ))}
+  //           </Radio.Group>
+  //         </div>
+  //         <div className="d-flex flex-column">
+  //           <button
+  //             className="btn btn-danger"
+  //             onClick={() => window.location.reload()}
+  //           >
+  //             RESET FILTERS
+  //           </button>
+  //         </div>
+  //       </div>
+  //       <div className="col-md-10 ">
+  //         <h1 className="text-center">All Products</h1>
+  //         <div className="d-flex flex-wrap">
+  //           {products?.map((p) => (
+  //             <div className="card m-2" key={p._id}>
+  //               <img
+  //                 src={`/api/v1/product/product-photo/${p._id}`}
+  //                 className="card-img-top"
+  //                 alt={p.name}
+  //               />
+  //               <div className="card-body">
+  //                 <div className="card-name-price">
+  //                   <h5 className="card-title">{p.name}</h5>
+  //                   <h5 className="card-title card-price">
+  //                     {p.price.toLocaleString("en-US", {
+  //                       style: "currency",
+  //                       currency: "USD",
+  //                     })}
+  //                   </h5>
+  //                 </div>
+  //                 <p className="card-text ">
+  //                   {p.description.substring(0, 60)}...
+  //                 </p>
+  //                 <div className="card-name-price">
+  //                   <button
+  //                     className="btn btn-info ms-1"
+  //                     onClick={() => navigate(`/product/${p.slug}`)}
+  //                   >
+  //                     More Details
+  //                   </button>
+  //                   <button
+  //                     className="btn btn-dark ms-1"
+  //                     onClick={() => {
+  //                       setCart([...cart, p]);
+  //                       localStorage.setItem(
+  //                         "cart",
+  //                         JSON.stringify([...cart, p])
+  //                       );
+  //                       toast.success("Item Added to cart");
+  //                     }}
+  //                   >
+  //                     ADD TO CART
+  //                   </button>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           ))}
+  //         </div>
+  //         <div className="m-2 p-3">
+  //           {products && products.length < total && (
+  //             <button
+  //               className="btn loadmore"
+  //               onClick={(e) => {
+  //                 e.preventDefault();
+  //                 setPage(page + 1);
+  //               }}
+  //             >
+  //               {loading ? (
+  //                 "Loading ..."
+  //               ) : (
+  //                 <>
+  //                   {" "}
+  //                   Loadmore <AiOutlineReload />
+  //                 </>
+  //               )}
+  //             </button>
+  //           )}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </Layout>
+  // );
+
+
   return (
     <Layout title={"All Products - Best offers "}>
       {/* banner image */}
@@ -117,50 +269,61 @@ const HomePage = () => {
       />
       {/* banner image */}
       <div className="container-fluid row mt-3 home-page">
-        <div className="col-mb-3 filters">
-          {/* <h4 className="text-center">Filter By Category</h4> */}
-          <div className="col-md-1 offset-md-11 d-flex flex-column">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              id="categoryDropdown"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+        <div className="col-md-2 filters">
+          <h4 className="text-center">Filter By Category</h4>
+          <div className="d-flex flex-column">
+            {/* {categories?.map((c) => (
+              <Checkbox
+                key={c._id}
+                onChange={(e) => handleFilter(e.target.checked, c._id)}
+              >
+                {c.name}
+              </Checkbox>
+            ))} */}
+
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              placeholder="Filter By Category"
+              onChange={(selectedValues) => {
+                let all = [...checked];
+
+                categories.forEach((category) => {
+                  const id = category._id;
+
+                  if (selectedValues.includes(id) && !all.includes(id)) {
+                    all.push(id);
+                  } else if (!selectedValues.includes(id) && all.includes(id)) {
+                    all = all.filter((c) => c !== id);
+                  }
+                });
+
+                setChecked(all);
+              }}
+              value={checked}
             >
-              Categories
-            </button>
-            <ul className="dropdown-menu" aria-labelledby="categoryDropdown">
               {categories?.map((c) => (
-                <li key={c._id} className="form-check">
-                  <Checkbox
-                    onChange={(e) => handleFilter(e.target.checked, c._id)}
-                  >
-                    {c.name}
-                  </Checkbox>
-                </li>
+                <Option key={c._id} value={c._id}>
+                  {c.name}
+                </Option>
               ))}
-            </ul>
+            </Select>
           </div>
           {/* price filter */}
-          {/* <h4 className="text-center mt-4">Filter By Price</h4> */}
+          <h4 className="text-center mt-4">Filter By Price</h4>
           <div className="d-flex flex-column">
-            <label htmlFor="priceFilter" className="form-label">
-              Filter By Price
-            </label>
-            <select
-              id="priceFilter"
-              className="form-select"
+            <Radio.Group
               onChange={(e) => setRadio(e.target.value)}
+              value={radio}
             >
-              <option value="">Select Price Range</option>
               {Prices?.map((p) => (
-                <option key={p._id} value={p.array}>
+                <Radio.Button key={p._id} value={p.array}>
                   {p.name}
-                </option>
+                </Radio.Button>
               ))}
-            </select>
+            </Radio.Group>
           </div>
-          <div className="d-flex flex-column mt-3">
+          <div className="d-flex flex-column">
             <button
               className="btn btn-danger"
               onClick={() => window.location.reload()}
@@ -168,58 +331,63 @@ const HomePage = () => {
               RESET FILTERS
             </button>
           </div>
-
         </div>
-        <div className="col-md-9 ">
+        <div className="col-md-10 ">
           <h1 className="text-center">All Products</h1>
           <div className="d-flex flex-wrap">
-            {products?.map((p) => (
-              <div className="card m-2" key={p._id}>
-                <img
-                  src={`/api/v1/product/product-photo/${p._id}`}
-                  className="card-img-top"
-                  alt={p.name}
-                />
-                <div className="card-body">
-                  <div className="card-name-price">
-                    <h5 className="card-title">{p.name}</h5>
-                    <h5 className="card-title card-price">
-                      {p.price.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
-                    </h5>
+            {products && products.length > 0 ? (
+              products.map((p) => (
+                <div className="card m-2" key={p._id}>
+
+                  <img
+                    src={`/api/v1/product/product-photo/${p._id}`}
+                    className="card-img-top"
+                    alt={p.name}
+                  />
+                  <div className="card-body">
+                    <div className="card-name-price">
+                      <h5 className="card-title">{p.name}</h5>
+                      <h5 className="card-title card-price">
+                        {p.price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </h5>
+                    </div>
+                    <p className="card-text ">
+                      {p.description.substring(0, 60)}...
+                    </p>
+                    <div className="card-name-price">
+                      <button
+                        className="btn btn-info ms-1"
+                        onClick={() => navigate(`/product/${p.slug}`)}
+                      >
+                        More Details
+                      </button>
+                      <button
+                        className="btn btn-dark ms-1"
+                        onClick={() => {
+                          setCart([...cart, p]);
+                          localStorage.setItem(
+                            "cart",
+                            JSON.stringify([...cart, p])
+                          );
+                          toast.success("Item Added to cart");
+                        }}
+                      >
+                        ADD TO CART
+                      </button>
+                    </div>
                   </div>
-                  <p className="card-text ">
-                    {p.description.substring(0, 60)}...
-                  </p>
-                  <div className="card-name-price">
-                    <button
-                      className="btn btn-info ms-1"
-                      onClick={() => navigate(`/product/${p.slug}`)}
-                    >
-                      More Details
-                    </button>
-                    <button
-                      className="btn btn-dark ms-1"
-                      onClick={() => {
-                        setCart([...cart, p]);
-                        localStorage.setItem(
-                          "cart",
-                          JSON.stringify([...cart, p])
-                        );
-                        toast.success("Item Added to cart");
-                      }}
-                    >
-                      ADD TO CART
-                    </button>
-                  </div>
+
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center">No products found.</p>
+            )}
           </div>
-          <div className="m-2 p-3">
-            {products && products.length < total && (
+          {products && products.length < total && products.length > 0 && (
+            <div className="m-2 p-3">
               <button
                 className="btn loadmore"
                 onClick={(e) => {
@@ -227,21 +395,15 @@ const HomePage = () => {
                   setPage(page + 1);
                 }}
               >
-                {loading ? (
-                  "Loading ..."
-                ) : (
-                  <>
-                    {" "}
-                    Loadmore <AiOutlineReload />
-                  </>
-                )}
+                {loading ? "Loading ..." : <>Loadmore <AiOutlineReload /></>}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
   );
+
 };
 
 export default HomePage;

@@ -32,6 +32,7 @@ const SearchInput = () => {
           aria-label="Search"
           value={values.keyword}
           onChange={(e) => setValues({ ...values, keyword: e.target.value })}
+          required
         />
         <button className="btn btn-outline-success" type="submit">
           Search

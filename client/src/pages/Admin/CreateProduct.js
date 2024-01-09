@@ -18,6 +18,23 @@ const CreateProduct = () => {
   const [shipping, setShipping] = useState("");
   const [photo, setPhoto] = useState("");
 
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    // Check if a file was selected
+    if (selectedFile) {
+      // Check if the selected file is an image
+      if (selectedFile.type.startsWith('image/')) {
+        setPhoto(selectedFile);
+      } else {
+        alert('Please select a valid image file.');
+        // Clear the input field
+        e.target.value = null;
+      }
+    }
+  };
+
   //get all category
   const getAllCategory = async () => {
     try {
@@ -95,8 +112,9 @@ const CreateProduct = () => {
                     type="file"
                     name="photo"
                     accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
+                    onChange={(e) => handleFileChange(e)}
                     hidden
+                    required
                   />
                 </label>
               </div>
@@ -119,6 +137,7 @@ const CreateProduct = () => {
                   placeholder="write a name"
                   className="form-control"
                   onChange={(e) => setName(e.target.value)}
+                  required
                 />
               </div>
               <div className="mb-3">
@@ -128,6 +147,7 @@ const CreateProduct = () => {
                   placeholder="write a description"
                   className="form-control"
                   onChange={(e) => setDescription(e.target.value)}
+                  required
                 />
               </div>
 
