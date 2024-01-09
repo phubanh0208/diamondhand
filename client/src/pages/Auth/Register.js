@@ -38,7 +38,7 @@ const Register = () => {
   };
 
   return (
-    <Layout title="Register - Ecommer App">
+    <Layout title="Register - DiamondHandStore">
       <div className="form-container" style={{ minHeight: "90vh" }}>
         <form onSubmit={handleSubmit}>
           <h4 className="title">REGISTER FORM</h4>
@@ -78,9 +78,15 @@ const Register = () => {
           </div>
           <div className="mb-3">
             <input
-              type="text"
+              type="tel" // Sử dụng type="tel" để chỉ cho phép nhập số điện thoại
+              pattern="[0-9]*" // Sử dụng pattern để chỉ cho phép nhập các ký tự số
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                const re = /^[0-9\b]+$/; // Sử dụng biểu thức chính quy để kiểm tra
+                if (e.target.value === '' || re.test(e.target.value)) {
+                  setPhone(e.target.value); // Chỉ cập nhật giá trị nếu là số hoặc chuỗi rỗng
+                }
+              }}
               className="form-control"
               id="exampleInputEmail1"
               placeholder="Enter Your Phone"

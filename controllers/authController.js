@@ -7,7 +7,7 @@ import JWT from "jsonwebtoken";
 export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address, answer } = req.body;
-    //validations
+    // Validations
     if (!name) {
       return res.send({ error: "Name is Required" });
     }
@@ -17,8 +17,11 @@ export const registerController = async (req, res) => {
     if (!password) {
       return res.send({ message: "Password is Required" });
     }
+    if (!/^\d+$/.test(phone)) {
+      return res.send({ message: "Phone number should contain only digits" });
+    }
     if (!phone) {
-      return res.send({ message: "Phone no is Required" });
+      return res.send({ message: "Phone number is Required" });
     }
     if (!address) {
       return res.send({ message: "Address is Required" });
@@ -26,18 +29,20 @@ export const registerController = async (req, res) => {
     if (!answer) {
       return res.send({ message: "Answer is Required" });
     }
-    //check user
-    const exisitingUser = await userModel.findOne({ email });
-    //exisiting user
-    if (exisitingUser) {
+
+    // Check user
+    const existingUser = await userModel.findOne({ email });
+    // Existing user
+    if (existingUser) {
       return res.status(200).send({
         success: false,
-        message: "Already Register please login",
+        message: "Already registered, please login",
       });
     }
-    //register user
+
+    // Register user
     const hashedPassword = await hashPassword(password);
-    //save
+    // Save user
     const user = await new userModel({
       name,
       email,
@@ -49,18 +54,19 @@ export const registerController = async (req, res) => {
 
     res.status(201).send({
       success: true,
-      message: "User Register Successfully",
+      message: "User registered successfully",
       user,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in Registeration",
+      message: "Error in registration",
       error,
     });
   }
 };
+
 
 //POST LOGIN
 export const loginController = async (req, res) => {
