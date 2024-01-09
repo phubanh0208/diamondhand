@@ -68,12 +68,17 @@ const HomePage = () => {
   //load more
   const loadMore = async () => {
     try {
-      setLoading(true);
-      const { data } = await axios.post(`/api/v1/product/product-list/${page}`, {
-        filters: { checked, radio },
-      });
-      setLoading(false);
-      setProducts([...products, ...data?.products]);
+      if (!checked.length && !radio.length) {
+        setLoading(true);
+        const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+        setLoading(false);
+
+        // Check if there are more products
+        if (data?.products && data.products.length > 0) {
+          setProducts([...products, ...data.products]);
+          setPage(page + 1);
+        }
+      }
     } catch (error) {
       console.log(error);
       setLoading(false);
