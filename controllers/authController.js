@@ -1,9 +1,23 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
+import nodemailer from 'nodemailer';
 
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#';
+
+  let randomString = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomString += characters.charAt(randomIndex);
+  }
+
+  return randomString;
+}
+
+// Sử dụng hàm để tạo chuỗi ngẫu nhiên có độ dài 10 kí tự
 export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address, answer } = req.body;
@@ -125,17 +139,38 @@ export const loginController = async (req, res) => {
 
 export const forgotPasswordController = async (req, res) => {
   try {
-    const { email, answer, newPassword } = req.body;
+    const { email, answer} = req.body;
     if (!email) {
       res.status(400).send({ message: "Emai is required" });
     }
     if (!answer) {
       res.status(400).send({ message: "answer is required" });
     }
-    if (!newPassword) {
-      res.status(400).send({ message: "New Password is required" });
-    }
+    const randomStr = generateRandomString(10);
+    let newPassword = randomStr; 
     //check
+    // Tạo một transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USER, // Địa chỉ email của bạn
+        pass: process.env.APP_PASSWORD, // Mật khẩu của bạn
+      },
+    });
+
+    // Cấu hình nội dung email
+    const mailOptions = {
+      from: 'buqcptudw@gmail.com',
+      to: email, // Địa chỉ email của người nhận
+      subject: 'Mật khẩu mới của bạn là: ',
+      text: randomStr,
+    };
+
+    
+
     const user = await userModel.findOne({ email, answer });
     //validation
     if (!user) {
@@ -144,11 +179,19 @@ export const forgotPasswordController = async (req, res) => {
         message: "Wrong Email Or Answer",
       });
     }
+    // Gửi email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+      } else {
+        console.log('Email sent:', info.response);
+      }
+    });
     const hashed = await hashPassword(newPassword);
     await userModel.findByIdAndUpdate(user._id, { password: hashed });
     res.status(200).send({
       success: true,
-      message: "Password Reset Successfully",
+      message: "Password Reset Successfully, Please check your mail",
     });
   } catch (error) {
     console.log(error);
@@ -177,6 +220,7 @@ export const updateProfileController = async (req, res) => {
     const user = await userModel.findById(req.user._id);
     //password
     if (password && password.length < 6) {
+      console.log(pz)
       return res.json({ error: "Passsword is required and 6 character long" });
     }
     const hashedPassword = password ? await hashPassword(password) : undefined;

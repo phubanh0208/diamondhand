@@ -26,6 +26,11 @@ const Profile = () => {
   // form function
   const handleSubmit = async (e) => {
     e.preventDefault();
+     // Kiểm tra điều kiện về độ dài của mật khẩu
+  if (password && password.length < 6) {
+    toast.error("Password must be at least 6 characters");
+    return;
+  }
     try {
       const { data } = await axios.put("/api/v1/auth/profile", {
         name,
