@@ -10,8 +10,8 @@ function generateRandomString(length) {
 
   let randomString = '';
   for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomString += characters.charAt(randomIndex);
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
   }
 
   return randomString;
@@ -139,7 +139,7 @@ export const loginController = async (req, res) => {
 
 export const forgotPasswordController = async (req, res) => {
   try {
-    const { email, answer} = req.body;
+    const { email, answer } = req.body;
     if (!email) {
       res.status(400).send({ message: "Emai is required" });
     }
@@ -147,7 +147,7 @@ export const forgotPasswordController = async (req, res) => {
       res.status(400).send({ message: "answer is required" });
     }
     const randomStr = generateRandomString(10);
-    let newPassword = randomStr; 
+    let newPassword = randomStr;
     //check
     // Tạo một transporter
     const transporter = nodemailer.createTransport({
@@ -163,13 +163,21 @@ export const forgotPasswordController = async (req, res) => {
 
     // Cấu hình nội dung email
     const mailOptions = {
-      from: 'buqcptudw@gmail.com',
+      from: 'DiamondHand Store <buqcptudw@gmail.com>', // Thay đổi "Your Company Name" thành tên công ty của bạn
       to: email, // Địa chỉ email của người nhận
-      subject: 'Mật khẩu mới của bạn là: ',
-      text: randomStr,
+      subject: 'Mật khẩu mới của bạn', // Loại bỏ dấu hai chấm và khoảng trắng phía sau
+      html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2 style="color: #333; font-weight: bold;">Mật khẩu mới của bạn</h2>
+      <p>Bạn đã yêu cầu thiết lập lại mật khẩu. Dưới đây là mật khẩu mới của bạn:</p>
+      <p style="background-color: #f5f5f5; padding: 10px; border-radius: 5px;">${randomStr}</p>
+      <p>Hãy đảm bảo bạn giữ mật khẩu này một cách an toàn.</p>
+      <p>Trân trọng,<br/>Đội ngũ hỗ trợ của Your Company Name</p>
+    </div>
+  `
     };
 
-    
+
 
     const user = await userModel.findOne({ email, answer });
     //validation
@@ -192,6 +200,7 @@ export const forgotPasswordController = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Password Reset Successfully, Please check your mail",
+      delay: 2000,
     });
   } catch (error) {
     console.log(error);
@@ -255,7 +264,7 @@ export const getOrdersController = async (req, res) => {
     const orders = await orderModel
       .find({ buyer: req.user._id })
       .populate("products", "-photo")
-      .populate("buyer", "name");
+      .populate("buyer", "name address");
     res.json(orders);
   } catch (error) {
     console.log(error);
@@ -272,7 +281,7 @@ export const getAllOrdersController = async (req, res) => {
     const orders = await orderModel
       .find({})
       .populate("products", "-photo")
-      .populate("buyer", "name")
+      .populate("buyer", "name address")
       .sort({ createdAt: "-1" });
     res.json(orders);
   } catch (error) {

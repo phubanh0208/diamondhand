@@ -14,6 +14,7 @@ import {
   realtedProductController,
   searchProductController,
   updateProductController,
+  getProductController2,
 } from "../controllers/productController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 import formidable from "express-formidable";
@@ -39,6 +40,7 @@ router.put(
 
 //get products
 router.get("/get-product", getProductController);
+router.get("/get-product2",getProductController2);
 
 //single product
 router.get("/get-product/:slug", getSingleProductController);

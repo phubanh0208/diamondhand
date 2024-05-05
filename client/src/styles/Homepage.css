@@ -43,7 +43,7 @@
 }
 
 .home-page .card-img-top {
-  height: 300px !important;
+  height: 250px !important;
 }
 /* ==================
 filters
@@ -72,6 +72,7 @@ filters
   border: none;
   border-radius: 0;
   margin-top: 20px;
+  
 }
 
 .loadmore {
@@ -103,4 +104,7 @@ filters
   to {
     opacity: 1;
   }
+}
+.ant-radio-button-wrapper{
+  width: 10em;
 }
